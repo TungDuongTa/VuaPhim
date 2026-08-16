@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { fetchBrowseMovies } from "@/lib/nguonc/api";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Filter, Loader2, Search } from "lucide-react";
 import { MovieCardApi } from "@/components/movie-card-api";
+import { PageFallback } from "@/components/page-fallback";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -88,8 +90,8 @@ function FilterRow({
 }
 
 export function BrowsePageClient({
-  movies,
-  pagination,
+  movies: initialMovies,
+  pagination: initialPagination,
   filters,
 }: {
   movies: MovieCard[];
@@ -98,6 +100,9 @@ export function BrowsePageClient({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [movies, setMovies] = useState(initialMovies);
+  const [pagination, setPagination] = useState(initialPagination);
+  const [isLoadingList, setIsLoadingList] = useState(initialMovies.length === 0);
   const [searchQuery, setSearchQuery] = useState(filters.query);
   const [showFilters, setShowFilters] = useState(
     Boolean(filters.type || filters.genre || filters.country || filters.year),
@@ -118,6 +123,57 @@ export function BrowsePageClient({
       year: filters.year,
     });
   }, [filters.query, filters.type, filters.genre, filters.country, filters.year]);
+
+  useEffect(() => {
+    setMovies(initialMovies);
+    setPagination(initialPagination);
+
+    if (initialMovies.length > 0) {
+      setIsLoadingList(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsLoadingList(true);
+
+    const load = async () => {
+      try {
+        const result = await fetchBrowseMovies({
+          query: filters.query,
+          type: filters.type,
+          genre: filters.genre,
+          country: filters.country,
+          year: filters.year,
+          page: filters.page,
+        });
+        if (cancelled) return;
+        setMovies(result.items || []);
+        setPagination(result.pagination || null);
+      } catch (error) {
+        console.error("Failed to load browse movies:", error);
+        if (!cancelled) {
+          setMovies([]);
+          setPagination(null);
+        }
+      } finally {
+        if (!cancelled) setIsLoadingList(false);
+      }
+    };
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    filters.country,
+    filters.genre,
+    filters.page,
+    filters.query,
+    filters.type,
+    filters.year,
+    initialMovies,
+    initialPagination,
+  ]);
 
   const navigate = (next: Partial<BrowseFilters>) => {
     const href = buildBrowseHref({
@@ -246,7 +302,9 @@ export function BrowsePageClient({
         </div>
       ) : null}
 
-      {movies.length === 0 ? (
+      {isLoadingList ? (
+        <PageFallback className="min-h-[30vh]" />
+      ) : movies.length === 0 ? (
         <div className="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
           Không tìm thấy phim phù hợp.
         </div>
@@ -258,22 +316,24 @@ export function BrowsePageClient({
         </div>
       )}
 
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        visiblePages={getVisiblePages(currentPage, totalPages)}
-        getPageHref={(page) =>
-          buildBrowseHref({
-            query: filters.query,
-            type: filters.type,
-            genre: filters.genre,
-            country: filters.country,
-            year: filters.year,
-            page,
-          })
-        }
-        disabled={isPending}
-      />
+      {isLoadingList ? null : (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          visiblePages={getVisiblePages(currentPage, totalPages)}
+          getPageHref={(page) =>
+            buildBrowseHref({
+              query: filters.query,
+              type: filters.type,
+              genre: filters.genre,
+              country: filters.country,
+              year: filters.year,
+              page,
+            })
+          }
+          disabled={isPending}
+        />
+      )}
     </div>
   );
 }

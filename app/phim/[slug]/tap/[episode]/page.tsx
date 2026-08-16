@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { PageFallback } from "@/components/page-fallback";
-import { WatchPlayerClient } from "@/components/watch-player-client";
+import { WatchPageLoader } from "@/components/watch-page-loader";
 import { getMovieDetail } from "@/lib/actions/movie.actions";
 import { getMoviePersonalState } from "@/lib/actions/watch-progress.actions";
-import { findEpisodeSource, getUniqueEpisodes } from "@/lib/player";
-import { toAbsoluteUrl, withSiteSuffix } from "@/lib/seo";
+import { canFetchNguoncOnServer } from "@/lib/nguonc/server-access";
+import { findEpisodeSource } from "@/lib/player";
+import { withSiteSuffix } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +18,18 @@ export async function generateMetadata({
   params,
 }: WatchPageProps): Promise<Metadata> {
   const { slug, episode } = await params;
+  const canonicalPath = `/phim/${slug}/tap/${episode}`;
+
+  if (!canFetchNguoncOnServer()) {
+    return {
+      title: `Tập ${decodeURIComponent(episode)}`,
+      description: "Xem phim trực tuyến tại VuaPhim",
+      alternates: { canonical: canonicalPath },
+    };
+  }
+
   const movie = await getMovieDetail(slug);
   const movieSlug = movie?.slug || slug;
-  const canonicalPath = `/phim/${movieSlug}/tap/${episode}`;
 
   if (!movie) {
     return {
@@ -41,7 +49,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: canonicalPath },
+    alternates: { canonical: `/phim/${movieSlug}/tap/${episode}` },
     openGraph: {
       title: withSiteSuffix(title),
       description,
@@ -69,69 +77,17 @@ export default function WatchPage({ params }: WatchPageProps) {
 
 async function WatchPageContent({ params }: WatchPageProps) {
   const { slug, episode } = await params;
-  const movie = await getMovieDetail(slug);
-
-  if (!movie) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h1 className="mb-4 text-2xl font-bold text-foreground">
-          Không tìm thấy phim
-        </h1>
-        <Link href="/">
-          <Button>Quay lại</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const source = findEpisodeSource(movie.episodes || [], episode);
-  if (!source) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h1 className="mb-4 text-2xl font-bold text-foreground">
-          Không tìm thấy tập phim
-        </h1>
-        <Link href={`/phim/${movie.slug || slug}`}>
-          <Button>Quay lại trang phim</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const personalState = await getMoviePersonalState(movie.slug || slug);
-  const unique = getUniqueEpisodes(movie.episodes || []);
-  const movieUrl = toAbsoluteUrl(`/phim/${movie.slug}`);
-  const episodeUrl = toAbsoluteUrl(`/phim/${movie.slug}/tap/${episode}`);
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "TVEpisode",
-    name: `${movie.name} ${source.name}`,
-    url: episodeUrl,
-    episodeNumber: unique.findIndex((item) => item.slug === source.slug) + 1,
-    partOfSeries: {
-      "@type": "TVSeries",
-      name: movie.name,
-      url: movieUrl,
-    },
-    image: movie.thumb_url?.trim() || undefined,
-  };
+  const movie = canFetchNguoncOnServer() ? await getMovieDetail(slug) : null;
+  const personalState = await getMoviePersonalState(movie?.slug || slug);
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <WatchPlayerClient
-        movie={movie}
-        episodeSlug={source.slug}
-        initialBookmarked={personalState.bookmarked}
-        initialPositionSeconds={
-          personalState.lastEpisodeSlug === source.slug
-            ? personalState.positionSeconds
-            : 0
-        }
-      />
-    </>
+    <WatchPageLoader
+      slug={slug}
+      episode={episode}
+      initialMovie={movie}
+      initialBookmarked={personalState.bookmarked}
+      lastEpisodeSlug={personalState.lastEpisodeSlug}
+      positionSeconds={personalState.positionSeconds}
+    />
   );
 }

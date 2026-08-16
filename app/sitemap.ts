@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { fetchLatestMovies } from "@/lib/nguonc/api";
+import { canFetchNguoncOnServer } from "@/lib/nguonc/server-access";
 import { toAbsoluteUrl } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -8,16 +9,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   let latestFilms: Array<{ slug: string; updatedAt: Date }> = [];
 
-  try {
-    const latest = await fetchLatestMovies(1);
-    latestFilms = (latest.items || [])
-      .map((item) => ({
-        slug: String(item.slug || "").trim(),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : now,
-      }))
-      .filter((item) => Boolean(item.slug));
-  } catch (error) {
-    console.error("Failed to load latest films for sitemap:", error);
+  if (canFetchNguoncOnServer()) {
+    try {
+      const latest = await fetchLatestMovies(1);
+      latestFilms = (latest.items || [])
+        .map((item) => ({
+          slug: String(item.slug || "").trim(),
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : now,
+        }))
+        .filter((item) => Boolean(item.slug));
+    } catch (error) {
+      console.error("Failed to load latest films for sitemap:", error);
+    }
   }
 
   const staticRoutes: MetadataRoute.Sitemap = [

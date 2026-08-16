@@ -1,9 +1,12 @@
 import { BrowsePageClient } from "@/components/browse-page-client";
 import { getBrowseMovies } from "@/lib/actions/movie.actions";
 import type { BrowseFilters } from "@/lib/browse-params";
+import { canFetchNguoncOnServer } from "@/lib/nguonc/server-access";
 
 export async function BrowseCatalogPage({ filters }: { filters: BrowseFilters }) {
-  const listResult = await getBrowseMovies(filters);
+  const listResult = canFetchNguoncOnServer()
+    ? await getBrowseMovies(filters)
+    : null;
   const movies = listResult?.items || [];
   const pagination = listResult?.pagination || null;
 

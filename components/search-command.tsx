@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
-import { searchMoviesQuick } from "@/lib/actions/movie.actions";
+import { searchMovies } from "@/lib/nguonc/api";
 import { buildBrowseHref } from "@/lib/browse-params";
 import { formatRelativeTime } from "@/lib/date-time";
 import type { MovieCard } from "@/types/movie-types";
@@ -41,7 +41,13 @@ export function SearchCommand({
     }
     setHasSearched(true);
     startTransition(async () => {
-      setResults(await searchMoviesQuick(debouncedQuery));
+      try {
+        const data = await searchMovies(debouncedQuery.trim(), 1);
+        setResults((data?.items || []).slice(0, 8));
+      } catch (error) {
+        console.error("Failed to search movies:", error);
+        setResults([]);
+      }
     });
   }, [debouncedQuery]);
 
