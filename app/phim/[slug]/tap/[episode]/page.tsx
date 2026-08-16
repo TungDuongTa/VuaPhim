@@ -9,6 +9,8 @@ import { getMoviePersonalState } from "@/lib/actions/watch-progress.actions";
 import { findEpisodeSource, getUniqueEpisodes } from "@/lib/player";
 import { toAbsoluteUrl, withSiteSuffix } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 type WatchPageProps = {
   params: Promise<{ slug: string; episode: string }>;
 };

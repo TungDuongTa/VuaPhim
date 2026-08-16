@@ -13,6 +13,8 @@ import {
 } from "@/lib/browse-params";
 import { withSiteSuffix } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   searchParams: Promise<BrowseSearchParams>;
 };

@@ -20,6 +20,8 @@ import {
   toAbsoluteUrl,
 } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: {
     absolute: "VuaPhim - Vua Phim xem phim bộ, phim lẻ và TV shows online",

@@ -6,7 +6,6 @@ import { PageFallback } from "@/components/page-fallback";
 import {
   BROWSE_BASE,
   BROWSE_DESCRIPTION,
-  browseStaticPageParams,
   browseTitleFromFilters,
   buildBrowseHref,
   parseBrowseFilters,
@@ -15,6 +14,9 @@ import { MAX_OFFSET_PAGE } from "@/lib/pagination";
 import { parsePageSlug } from "@/lib/page-slug";
 import { withSiteSuffix } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
 type PageProps = {
   params: Promise<{
     pageSlug: string;
@@ -22,7 +24,7 @@ type PageProps = {
 };
 
 export function generateStaticParams() {
-  return browseStaticPageParams();
+  return [];
 }
 
 export async function generateMetadata({

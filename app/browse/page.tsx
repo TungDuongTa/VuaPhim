@@ -7,6 +7,8 @@ import {
 } from "@/lib/browse-params";
 import { withSiteSuffix } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 const filters = {
   query: "",
   type: "",

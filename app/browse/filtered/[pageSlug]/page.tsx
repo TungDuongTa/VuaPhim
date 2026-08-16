@@ -15,6 +15,8 @@ import { MAX_OFFSET_PAGE } from "@/lib/pagination";
 import { parsePageSlug } from "@/lib/page-slug";
 import { withSiteSuffix } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{
     pageSlug: string;

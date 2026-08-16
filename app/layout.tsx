@@ -10,6 +10,8 @@ import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { getBaseUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
   variable: "--font-inter",

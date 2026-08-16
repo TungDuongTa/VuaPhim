@@ -14,6 +14,8 @@ import {
   withSiteSuffix,
 } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 type MovieDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
