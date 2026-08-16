@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Link from "next/link";
 import { PageFallback } from "@/components/page-fallback";
 import { WatchPlayerClient } from "@/components/watch-player-client";
 import { Button } from "@/components/ui/button";
 import { fetchMovieDetail } from "@/lib/nguonc/api";
+import { resetWindowScroll } from "@/lib/reset-window-scroll";
 import { findEpisodeSource, getUniqueEpisodes } from "@/lib/player";
 import { toAbsoluteUrl } from "@/lib/seo";
 import type { MovieDetail } from "@/types/movie-types";
@@ -58,6 +59,10 @@ export function WatchPageLoader({
       cancelled = true;
     };
   }, [initialMovie, slug]);
+
+  useLayoutEffect(() => {
+    if (!loading) resetWindowScroll();
+  }, [loading]);
 
   if (loading) {
     return <PageFallback className="min-h-screen" />;

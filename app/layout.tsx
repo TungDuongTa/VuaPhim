@@ -5,6 +5,7 @@ import Script from "next/script";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import ProgressBar from "@/components/ProgressBar";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -100,9 +101,10 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem={false}
         >
-          <main className="max-w-screen overflow-x-hidden">
+          <main className="max-w-screen overflow-x-clip">
             <Suspense fallback={null}>
               <ProgressBar />
+              <ScrollToTop />
             </Suspense>
             <Suspense fallback={null}>
               <Header />

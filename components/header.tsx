@@ -42,6 +42,8 @@ export function Header() {
 
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsVisible(true);
+    setLastScrollY(0);
   }, [pathname]);
 
   const navLinks = [

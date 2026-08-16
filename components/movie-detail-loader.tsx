@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Link from "next/link";
 import { MovieDetailPageClient } from "@/components/movie-detail-page-client";
 import { PageFallback } from "@/components/page-fallback";
 import { Button } from "@/components/ui/button";
 import { fetchMovieDetail } from "@/lib/nguonc/api";
+import { resetWindowScroll } from "@/lib/reset-window-scroll";
 import { stripHtml, toAbsoluteUrl, truncateText } from "@/lib/seo";
 import type { MovieDetail } from "@/types/movie-types";
 
@@ -55,6 +56,10 @@ export function MovieDetailLoader({
       cancelled = true;
     };
   }, [initialMovie, slug]);
+
+  useLayoutEffect(() => {
+    if (!loading) resetWindowScroll();
+  }, [loading]);
 
   if (loading) {
     return <PageFallback className="min-h-[60vh]" />;

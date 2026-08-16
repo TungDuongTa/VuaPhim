@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { HomeMovieCarousel } from "@/components/home-movie-carousel";
@@ -14,6 +14,7 @@ import {
   HOME_LATEST_COUNT,
 } from "@/lib/home-config";
 import { fetchBrowseMovies, fetchLatestMovies } from "@/lib/nguonc/api";
+import { resetWindowScroll } from "@/lib/reset-window-scroll";
 import type { MovieCard } from "@/types/movie-types";
 
 type CarouselSection = {
@@ -75,6 +76,10 @@ export function HomeCatalog({
       cancelled = true;
     };
   }, [hasServerData]);
+
+  useLayoutEffect(() => {
+    if (!loading) resetWindowScroll();
+  }, [loading]);
 
   if (loading) {
     return (

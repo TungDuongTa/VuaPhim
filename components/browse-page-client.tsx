@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { useEffect, useLayoutEffect, useState, useTransition, type FormEvent } from "react";
 import { fetchBrowseMovies } from "@/lib/nguonc/api";
+import { resetWindowScroll } from "@/lib/reset-window-scroll";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Filter, Loader2, Search } from "lucide-react";
 import { MovieCardApi } from "@/components/movie-card-api";
@@ -174,6 +175,10 @@ export function BrowsePageClient({
     initialMovies,
     initialPagination,
   ]);
+
+  useLayoutEffect(() => {
+    if (!isLoadingList) resetWindowScroll();
+  }, [isLoadingList]);
 
   const navigate = (next: Partial<BrowseFilters>) => {
     const href = buildBrowseHref({
