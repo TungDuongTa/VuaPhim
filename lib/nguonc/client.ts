@@ -26,7 +26,20 @@ export async function nguoncFetch<T>(path: string): Promise<T> {
     });
 
     if (!response.ok) {
-      throw new Error(`NguonC ${response.status} for ${path}`);
+      const body = (await response.text()).replace(/\s+/g, " ").trim().slice(0, 400);
+      const details = {
+        url,
+        status: response.status,
+        server: response.headers.get("server"),
+        cfRay: response.headers.get("cf-ray"),
+        cfCacheStatus: response.headers.get("cf-cache-status"),
+        contentType: response.headers.get("content-type"),
+        body,
+      };
+      console.error("NguonC request failed:", details);
+      throw new Error(
+        `NguonC ${response.status} for ${path} server=${details.server || "-"} cf-ray=${details.cfRay || "-"} body=${body || "-"}`,
+      );
     }
 
     return (await response.json()) as T;
