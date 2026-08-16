@@ -36,6 +36,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# nguonc proxy worker
+/nguonc-proxy/node_modules
+/nguonc-proxy/.wrangler
+/nguonc-proxy/.dev.vars
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

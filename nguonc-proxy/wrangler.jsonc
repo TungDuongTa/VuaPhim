@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vuaphim-nguonc-proxy",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-16",
+  "account_id": "9cb9d9a19d2788279bc11177e0eb09dd",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
