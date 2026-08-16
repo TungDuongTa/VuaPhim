@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { fetchLatestMovies } from "@/lib/nguonc/api";
 import { toAbsoluteUrl } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   let latestFilms: Array<{ slug: string; updatedAt: Date }> = [];
