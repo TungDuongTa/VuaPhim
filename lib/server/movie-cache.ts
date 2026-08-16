@@ -1,4 +1,3 @@
-import { cacheLife, cacheTag } from "next/cache";
 import { getRecentTopLevelComments } from "@/lib/actions/comment.actions";
 import {
   fetchLatestMovies,
@@ -9,22 +8,9 @@ import {
   fetchMoviesByYear,
   searchMovies,
 } from "@/lib/nguonc/api";
-import { CACHE_TAGS, filmTag } from "@/lib/server/cache-tags";
 import { fetchMovieRankings } from "@/lib/server/movie-rankings";
 import { fetchUserRankings } from "@/lib/server/user-rankings";
-import type { MovieCard, MovieDetail, MovieListResult } from "@/types/movie-types";
-
-const MOVIE_LISTS_LIFE = {
-  stale: 900,
-  revalidate: 1800,
-  expire: 21_600,
-} as const;
-
-const HOME_SIDEBAR_LIFE = {
-  stale: 900,
-  revalidate: 900,
-  expire: 3600,
-} as const;
+import type { MovieDetail, MovieListResult } from "@/types/movie-types";
 
 const emptyList = (page: number): MovieListResult => ({
   items: [],
@@ -39,9 +25,6 @@ const emptyList = (page: number): MovieListResult => ({
 });
 
 export async function getCachedLatestMovies(page = 1): Promise<MovieListResult> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
   try {
     return await fetchLatestMovies(page);
   } catch (error) {
@@ -54,9 +37,6 @@ export async function getCachedMoviesByType(
   slug: string,
   page = 1,
 ): Promise<MovieListResult> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
   try {
     return await fetchMoviesByType(slug, page);
   } catch (error) {
@@ -69,9 +49,6 @@ export async function getCachedMoviesByGenre(
   slug: string,
   page = 1,
 ): Promise<MovieListResult> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
   try {
     return await fetchMoviesByGenre(slug, page);
   } catch (error) {
@@ -84,9 +61,6 @@ export async function getCachedMoviesByCountry(
   slug: string,
   page = 1,
 ): Promise<MovieListResult> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
   try {
     return await fetchMoviesByCountry(slug, page);
   } catch (error) {
@@ -99,9 +73,6 @@ export async function getCachedMoviesByYear(
   year: string,
   page = 1,
 ): Promise<MovieListResult> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
   try {
     return await fetchMoviesByYear(year, page);
   } catch (error) {
@@ -114,9 +85,6 @@ export async function getCachedSearchMovies(
   keyword: string,
   page = 1,
 ): Promise<MovieListResult> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
   try {
     return await searchMovies(keyword, page);
   } catch (error) {
@@ -128,10 +96,6 @@ export async function getCachedSearchMovies(
 export async function getCachedMovieDetail(
   slug: string,
 ): Promise<MovieDetail | null> {
-  "use cache: remote";
-  cacheLife(MOVIE_LISTS_LIFE);
-  cacheTag(CACHE_TAGS.movieLists);
-  cacheTag(filmTag(slug));
   try {
     return await fetchMovieDetail(slug);
   } catch (error) {
@@ -158,22 +122,13 @@ export async function getCachedBrowseMovies(options: {
 }
 
 export async function getCachedMovieRankings(limit = 10) {
-  "use cache: remote";
-  cacheLife(HOME_SIDEBAR_LIFE);
-  cacheTag(CACHE_TAGS.movieRankings);
   return fetchMovieRankings(limit);
 }
 
 export async function getCachedUserRankings(limit = 10) {
-  "use cache: remote";
-  cacheLife(HOME_SIDEBAR_LIFE);
-  cacheTag(CACHE_TAGS.userRankings);
   return fetchUserRankings(limit);
 }
 
 export async function getCachedRecentHomeComments(limit = 10) {
-  "use cache: remote";
-  cacheLife(HOME_SIDEBAR_LIFE);
-  cacheTag(CACHE_TAGS.homeComments);
   return getRecentTopLevelComments(limit);
 }
