@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
+  BookOpen,
   Bookmark,
   Clock,
   Gem,
@@ -50,9 +51,16 @@ export function Header() {
     { href: "/history", label: "Lịch sử", icon: Clock },
     { href: "/ranking", label: "BXH", icon: Trophy },
     { href: "/shop", label: "Cửa Hàng", icon: Gem },
+    {
+      href: "https://www.vuatruyen.cc/",
+      label: "VuaTruyen",
+      icon: BookOpen,
+      external: true,
+    },
   ];
 
   const isActiveLink = (href: string) => {
+    if (href.startsWith("http")) return false;
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
   };
@@ -106,6 +114,8 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
                   aria-current={isActiveLink(link.href) ? "page" : undefined}
                   className={cn(
                     "group relative flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold transition-all",
@@ -132,6 +142,8 @@ export function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
                       "flex items-center gap-3 rounded-lg border px-3 py-3 text-sm font-medium",
