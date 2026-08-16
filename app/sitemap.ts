@@ -1,13 +1,23 @@
 import type { MetadataRoute } from "next";
-import { getCachedLatestMovies } from "@/lib/server/movie-cache";
+import { cacheLife } from "next/cache";
+import { fetchLatestMovies } from "@/lib/nguonc/api";
 import { toAbsoluteUrl } from "@/lib/seo";
 
+const SITEMAP_CACHE_LIFE = {
+  stale: 3600,
+  revalidate: 3600,
+  expire: 86_400,
+} as const;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  "use cache: remote";
+  cacheLife(SITEMAP_CACHE_LIFE);
+
   const now = new Date();
   let latestFilms: Array<{ slug: string; updatedAt: Date }> = [];
 
   try {
-    const latest = await getCachedLatestMovies(1);
+    const latest = await fetchLatestMovies(1);
     latestFilms = (latest.items || [])
       .map((item) => ({
         slug: String(item.slug || "").trim(),
