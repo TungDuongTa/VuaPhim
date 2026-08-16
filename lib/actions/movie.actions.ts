@@ -1,10 +1,10 @@
 "use server";
 
 import {
-  getCachedBrowseMovies,
-  getCachedMovieDetail,
-  getCachedSearchMovies,
-} from "@/lib/server/movie-cache";
+  fetchBrowseMovies,
+  fetchMovieDetail,
+  searchMovies,
+} from "@/lib/nguonc/api";
 import type { MovieCard, MovieDetail, MovieListResult } from "@/types/movie-types";
 
 async function safeQuery<T>(
@@ -28,7 +28,7 @@ export async function getBrowseMovies(filters: {
   page?: number;
 }): Promise<MovieListResult | null> {
   return safeQuery("browse movies", () =>
-    getCachedBrowseMovies({
+    fetchBrowseMovies({
       ...filters,
       page: filters.page || 1,
     }),
@@ -38,14 +38,14 @@ export async function getBrowseMovies(filters: {
 export async function getMovieDetail(
   slug: string,
 ): Promise<MovieDetail | null> {
-  return safeQuery(`movie ${slug}`, () => getCachedMovieDetail(slug));
+  return safeQuery(`movie ${slug}`, () => fetchMovieDetail(slug));
 }
 
 export async function searchMoviesQuick(keyword: string): Promise<MovieCard[]> {
   if (!keyword || keyword.trim().length < 2) return [];
 
   const data = await safeQuery(`quick search ${keyword}`, () =>
-    getCachedSearchMovies(keyword.trim(), 1),
+    searchMovies(keyword.trim(), 1),
   );
 
   return (data?.items || []).slice(0, 8);

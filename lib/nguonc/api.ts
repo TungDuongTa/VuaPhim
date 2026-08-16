@@ -77,3 +77,20 @@ export async function fetchMovieDetail(
   );
   return toMovieDetailFromResponse(payload);
 }
+
+export async function fetchBrowseMovies(options: {
+  query?: string;
+  type?: string;
+  genre?: string;
+  country?: string;
+  year?: string;
+  page?: number;
+}): Promise<MovieListResult> {
+  const page = options.page || 1;
+  if (options.query) return searchMovies(options.query, page);
+  if (options.genre) return fetchMoviesByGenre(options.genre, page);
+  if (options.country) return fetchMoviesByCountry(options.country, page);
+  if (options.year) return fetchMoviesByYear(options.year, page);
+  if (options.type) return fetchMoviesByType(options.type, page);
+  return fetchLatestMovies(page);
+}

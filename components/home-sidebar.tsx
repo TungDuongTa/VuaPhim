@@ -2,11 +2,9 @@ import { RankingSidebarApi } from "@/components/ranking-sidebar-api";
 import { UserRankingSidebar } from "@/components/user-ranking-sidebar";
 import { CommentsSection } from "@/components/comments-section";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  getCachedMovieRankings,
-  getCachedRecentHomeComments,
-  getCachedUserRankings,
-} from "@/lib/server/movie-cache";
+import { getRecentTopLevelComments } from "@/lib/actions/comment.actions";
+import { fetchMovieRankings } from "@/lib/server/movie-rankings";
+import { fetchUserRankings } from "@/lib/server/user-rankings";
 
 export function HomeSidebarSkeleton() {
   return (
@@ -29,9 +27,9 @@ export function HomeSidebarSkeleton() {
 
 export async function HomeSidebar() {
   const [rankings, userRankings, comments] = await Promise.all([
-    getCachedMovieRankings(10),
-    getCachedUserRankings(10),
-    getCachedRecentHomeComments(10),
+    fetchMovieRankings(10),
+    fetchUserRankings(10),
+    getRecentTopLevelComments(10),
   ]);
 
   return (

@@ -10,7 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { getCachedMovieRankings } from "@/lib/server/movie-cache";
+import { fetchMovieRankings } from "@/lib/server/movie-rankings";
 import type { MovieRankingPeriod } from "@/lib/server/movie-rankings";
 import { getVisiblePages, toPositiveInt } from "@/lib/pagination";
 import { formatViewCount } from "@/lib/format";
@@ -29,7 +29,7 @@ export async function RankingCatalogPage({
   tab: MovieRankingPeriod;
   requestedPage: number;
 }) {
-  const rankings = await getCachedMovieRankings(RANKING_MAX_ITEMS);
+  const rankings = await fetchMovieRankings(RANKING_MAX_ITEMS);
   const ranked = rankings[tab].slice(0, RANKING_MAX_ITEMS);
   const totalPages = Math.max(1, Math.ceil(ranked.length / RANKING_ITEMS_PER_PAGE));
   const currentPage = Math.min(Math.max(1, toPositiveInt(requestedPage, 1)), totalPages);

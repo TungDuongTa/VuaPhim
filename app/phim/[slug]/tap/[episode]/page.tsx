@@ -1,4 +1,4 @@
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,11 @@ type WatchPageProps = {
   params: Promise<{ slug: string; episode: string }>;
 };
 
-const getMovieDetailCached = cache(async (slug: string) =>
-  getMovieDetail(slug),
-);
-
 export async function generateMetadata({
   params,
 }: WatchPageProps): Promise<Metadata> {
   const { slug, episode } = await params;
-  const movie = await getMovieDetailCached(slug);
+  const movie = await getMovieDetail(slug);
   const movieSlug = movie?.slug || slug;
   const canonicalPath = `/phim/${movieSlug}/tap/${episode}`;
 
@@ -73,7 +69,7 @@ export default function WatchPage({ params }: WatchPageProps) {
 
 async function WatchPageContent({ params }: WatchPageProps) {
   const { slug, episode } = await params;
-  const movie = await getMovieDetailCached(slug);
+  const movie = await getMovieDetail(slug);
 
   if (!movie) {
     return (

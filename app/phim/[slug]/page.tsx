@@ -1,4 +1,4 @@
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,11 @@ type MovieDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const getMovieDetailCached = cache(async (slug: string) =>
-  getMovieDetail(slug),
-);
-
 export async function generateMetadata({
   params,
 }: MovieDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const movie = await getMovieDetailCached(slug);
+  const movie = await getMovieDetail(slug);
   const canonicalPath = `/phim/${movie?.slug || slug}`;
 
   if (!movie) {
@@ -78,7 +74,7 @@ export default function MovieDetailPage({ params }: MovieDetailPageProps) {
 async function MovieDetailContent({ params }: MovieDetailPageProps) {
   const { slug } = await params;
   const [detailResult, personalResult, viewResult] = await Promise.allSettled([
-    getMovieDetailCached(slug),
+    getMovieDetail(slug),
     getMoviePersonalState(slug),
     getMovieViewStats(slug),
   ]);
