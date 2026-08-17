@@ -171,9 +171,9 @@ export function SearchTrigger({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-xl border border-border/70 bg-card/70 px-4 py-2.5 text-muted-foreground transition-colors hover:border-primary/30 hover:bg-secondary/60"
+      className="flex w-full items-center gap-3 rounded-xl border border-foreground/25 bg-card px-4 py-2.5 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-secondary"
     >
-      <Search className="h-4 w-4 shrink-0" />
+      <Search className="h-4 w-4 shrink-0 text-foreground/70" />
       <span className="flex-1 text-left text-sm">Tìm phim....</span>
       <kbd className="hidden h-6 items-center rounded-md border border-border/80 bg-secondary/80 px-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase sm:inline-flex">
         Ctrl K

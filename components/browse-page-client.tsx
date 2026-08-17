@@ -21,7 +21,7 @@ import {
   findCatalogName,
   type CatalogOption,
 } from "@/lib/nguonc/catalog";
-import { cn } from "@/lib/utils";
+import { chipClassName } from "@/lib/chip-class";
 import type { MovieCard, Pagination } from "@/types/movie-types";
 
 type DraftFilters = Pick<BrowseFilters, "type" | "genre" | "country" | "year">;
@@ -43,12 +43,7 @@ function FilterChip({
     <button
       type="button"
       onClick={onSelect}
-      className={cn(
-        "rounded-md px-2.5 py-1 text-sm transition-colors",
-        selected
-          ? "border border-primary bg-primary/10 font-medium text-foreground"
-          : "border border-transparent text-muted-foreground hover:text-foreground",
-      )}
+      className={chipClassName(selected)}
     >
       {label}
     </button>
@@ -212,12 +207,12 @@ export function BrowsePageClient({
         }}
       >
         <div className="relative flex-1">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 z-10 h-4 w-4 -translate-y-1/2 text-foreground/70" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm tên phim..."
-            className="pl-10"
+            className="border-foreground/25 bg-card pl-10"
           />
         </div>
         <Button type="submit" disabled={isPending}>

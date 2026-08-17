@@ -345,8 +345,8 @@ export function MovieDetailPageClient({
                         href={episodeHref(movie.slug || slug, episode.slug)}
                         className={`rounded-lg border px-3 py-2 text-center text-sm font-medium transition-colors ${
                           isCurrent
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border hover:bg-secondary"
+                            ? "border-primary bg-card text-primary"
+                            : "border-border bg-card hover:bg-secondary"
                         }`}
                       >
                         <span className="inline-flex items-center justify-center gap-1">
@@ -401,7 +401,7 @@ function MetaChipList({
         <Link key={item.id || item.slug} href={hrefFor(item)}>
           <Badge
             variant="secondary"
-            className="cursor-pointer hover:bg-secondary/80"
+            className="cursor-pointer"
           >
             {item.name}
           </Badge>

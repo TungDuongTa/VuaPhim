@@ -32,6 +32,17 @@ const AVATAR_FRAMES: Array<{ n: number; frameScale: number }> = [
   { n: 26, frameScale: 1.5 },
   { n: 27, frameScale: 1.15 },
   { n: 28, frameScale: 1.15 },
+  { n: 29, frameScale: 1.5 },
+  { n: 30, frameScale: 1.5 },
+  { n: 31, frameScale: 1.3 },
+  { n: 32, frameScale: 1.3 },
+  { n: 33, frameScale: 1.3 },
+  { n: 34, frameScale: 1.3 },
+  { n: 35, frameScale: 1.45 },
+  { n: 36, frameScale: 1.3 },
+  { n: 37, frameScale: 1.3 },
+  { n: 38, frameScale: 1.3 },
+  { n: 39, frameScale: 1.5 },
 ];
 
 export const AVATAR_FRAME_SHOP_ITEMS: ShopItem[] = AVATAR_FRAMES.map(

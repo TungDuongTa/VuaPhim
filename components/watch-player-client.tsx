@@ -12,13 +12,6 @@ import {
 } from "lucide-react";
 import { MovieCommentsSection } from "@/components/movie-comments-section";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useBookmarkToggle } from "@/hooks/use-bookmark-toggle";
 import {
   episodeHref,
@@ -31,6 +24,7 @@ import {
   recordEpisodeVisit,
   saveWatchProgress,
 } from "@/lib/actions/watch-progress.actions";
+import { chipClassName } from "@/lib/chip-class";
 import type { MovieDetail } from "@/types/movie-types";
 
 type WatchPlayerClientProps = {
@@ -266,25 +260,28 @@ export function WatchPlayerClient({
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {serverOptions.length > 1 && (
-            <Select
-              value={active?.serverName}
-              onValueChange={handleServerChange}
-            >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Chọn server" />
-              </SelectTrigger>
-              <SelectContent>
-                {serverOptions.map((option) => (
-                  <SelectItem key={option.serverName} value={option.serverName}>
-                    {option.serverName}
-                    {option.source.m3u8 ? " · HLS" : " · Embed"}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+        <div className="mt-4 flex flex-col gap-3">
+          {serverOptions.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {serverOptions.map((option) => {
+                const selected = option.serverName === active?.serverName;
+                const label = `${option.serverName}${
+                  option.source.m3u8 ? " · HLS" : " · Embed"
+                }`;
+                return (
+                  <button
+                    key={option.serverName}
+                    type="button"
+                    onClick={() => handleServerChange(option.serverName)}
+                    className={chipClassName(selected)}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+          <div className="flex flex-wrap items-center gap-3">
           {prevEpisode ? (
             <Link href={episodeHref(movie.slug, prevEpisode.slug)}>
               <Button variant="outline" className="gap-2">
@@ -307,6 +304,7 @@ export function WatchPlayerClient({
               Danh sách tập
             </Button>
           </Link>
+          </div>
         </div>
 
         <section className="mt-6">
@@ -322,7 +320,7 @@ export function WatchPlayerClient({
                 className={`rounded-lg border px-2 py-2 text-center text-sm ${
                   episode.slug === episodeSlug
                     ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border hover:bg-secondary"
+                    : "border-border bg-card hover:bg-secondary"
                 }`}
               >
                 {episode.name || episode.slug}
